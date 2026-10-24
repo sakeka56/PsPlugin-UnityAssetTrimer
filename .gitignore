@@ -1,0 +1,7 @@
+/dist/
+/.build/
+/.test-work/
+/tests/results/
+*.user
+*.suo
+*.tmp

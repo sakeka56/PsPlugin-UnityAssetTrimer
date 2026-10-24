@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="390" viewBox="0 0 1080 390" role="img" aria-labelledby="title desc">
+  <title id="title">Unity Asset Trim — transparent border cropping</title>
+  <desc id="desc">An icon surrounded by excess transparent pixels becomes a tightly cropped icon. Odd dimensions receive one transparent pixel to become even.</desc>
+  <defs>
+    <pattern id="checker" width="20" height="20" patternUnits="userSpaceOnUse"><path fill="#edf1f6" d="M0 0h20v20H0z"/><path fill="#dce3ed" d="M0 0h10v10H0zm10 10h10v10H10z"/></pattern>
+    <linearGradient id="blue" x2="0.8" y2="1"><stop stop-color="#55d5ff"/><stop offset="1" stop-color="#2056ee"/></linearGradient>
+    <g id="icon"><path d="M0-66 54-43v58C54 44 26 65 0 77-26 65-54 44-54 15v-58Z" fill="url(#blue)" stroke="#ffe18a" stroke-width="10"/><path d="m-22 4 16 16 33-37" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </defs>
+  <rect width="1080" height="390" rx="20" fill="#101a2d"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="44" y="46" fill="#f8fafc" font-size="23" font-weight="700">Less empty space. Same artwork.</text>
+    <rect x="44" y="77" width="365" height="258" rx="8" fill="url(#checker)"/>
+    <rect x="44" y="77" width="365" height="258" rx="8" fill="none" stroke="#93a4bd" stroke-dasharray="6 5"/>
+    <use href="#icon" transform="translate(226 200)"/>
+    <text x="44" y="366" fill="#aebed3" font-size="17">Before · excess transparent borders</text>
+    <path d="M461 205h92m-18-17 19 17-19 17" fill="none" stroke="#79a8ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="625" y="124" width="120" height="154" rx="3" fill="url(#checker)" stroke="#79a8ff" stroke-width="2"/>
+    <use href="#icon" transform="translate(685 195)"/>
+    <text x="787" y="160" fill="#e2ecfa" font-size="19" font-weight="600">Trim + Export</text>
+    <text x="787" y="195" fill="#aebed3" font-size="16">Transparent PNG</text>
+    <text x="787" y="223" fill="#aebed3" font-size="16">Original pixel scale</text>
+    <text x="787" y="251" fill="#aebed3" font-size="16">Even width and height</text>
+    <text x="625" y="326" fill="#aebed3" font-size="17">7 × 9 → 8 × 10</text>
+    <text x="625" y="354" fill="#7c91af" font-size="15">Odd size? Add 1 transparent pixel.</text>
+  </g>
+</svg>
