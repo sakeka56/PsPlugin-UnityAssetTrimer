@@ -108,6 +108,12 @@ Installer tests exercise the compiled executable, embedded payload, fresh instal
 
 Native UXP validation on Photoshop 25.2.0 additionally checked layer identities, matching RGBA pixels, one-step undo, unchanged source PSD after PNG export, focus restoration and the batch-window shortcut. The installed panel was also verified in normal mode after disabling the temporary development environment.
 
+## Support the project
+
+If this tool helps your workflow, you can support its continued development with a voluntary tip. Thank you!
+
+<img src="docs/assets/sponsor.jpg" alt="WeChat appreciation code — support the project" width="360">
+
 ## License
 
 [MIT](LICENSE). Photoshop and Unity are trademarks of their respective owners. This project is independent of Adobe and Unity Technologies.

@@ -34,6 +34,7 @@ foreach ($name in @('README.md','README.zh-CN.md','LICENSE','CHANGELOG.md')) {
 New-Item -ItemType Directory -Path (Join-Path $stage 'docs\assets') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $root 'docs\assets\trim-example.svg') -Destination (Join-Path $stage 'docs\assets')
 Copy-Item -LiteralPath (Join-Path $root 'docs\assets\trim-example.zh-CN.svg') -Destination (Join-Path $stage 'docs\assets')
+Copy-Item -LiteralPath (Join-Path $root 'docs\assets\sponsor.jpg') -Destination (Join-Path $stage 'docs\assets')
 New-Item -ItemType Directory -Path (Join-Path $stage 'packaging') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $root 'packaging\README.md') -Destination (Join-Path $stage 'packaging')
 $zip = Join-Path $dist "UnityAssetTrim-Portable-$version.zip"

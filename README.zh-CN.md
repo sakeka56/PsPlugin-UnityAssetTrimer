@@ -108,6 +108,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-photoshop.ps1
 
 另已在 Photoshop 25.2.0 的真实 UXP 环境核对图层身份、对应 RGBA 像素、单步撤销、PNG 导出后原稿不变、焦点恢复及批量快捷入口；临时开发环境关闭后，也验证了正式安装面板在普通模式下可被识别。
 
+## 赞助支持
+
+如果这个工具对你有帮助，欢迎自愿扫码赞赏，支持后续维护与开发。感谢支持！
+
+<img src="docs/assets/sponsor.jpg" alt="微信赞赏码 — 支持项目开发" width="360">
+
 ## 许可证
 
 [MIT](LICENSE)。Photoshop 和 Unity 商标归各自所有者所有；本项目独立于 Adobe 与 Unity Technologies。
