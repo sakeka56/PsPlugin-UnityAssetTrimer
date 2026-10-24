@@ -1,5 +1,6 @@
 /dist/
 /.build/
+.uxprc
 /.test-work/
 /tests/results/
 *.user

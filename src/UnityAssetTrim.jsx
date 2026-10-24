@@ -1,5 +1,5 @@
 #target photoshop
-/* Unity Asset Trim v1.0.1 | MIT License | Copyright (c) 2026 sakeka56 */
+/* Unity Asset Trim v1.1.0 | MIT License | Copyright (c) 2026 sakeka56 */
 var UnityAssetTrimLanguage = typeof UnityAssetTrimLanguage === "undefined" ?
     (typeof app !== "undefined" && /^zh/i.test(app.locale) ? "zh" : "en") : UnityAssetTrimLanguage;
 function uatText(text) {
@@ -24,7 +24,7 @@ function uatText(text) {
     " 张，跳过 ": "; skipped: ",
     " 张，失败 ": "; failed: ",
     " 张。\n": ".\n",
-    "Unity 资源批量裁剪 v1.0": "Unity Asset Trim v1.0.1",
+    "Unity 资源批量裁剪 v1.0": "Unity Asset Trim v1.1.0",
     "裁掉透明边缘 · 原尺寸像素导出 · 源文件保留": "Trim transparent edges · Keep pixel scale · Preserve source files",
     "1. 输入图片": "1. Input images",
     "选择多张图片…": "Choose images...",
@@ -245,7 +245,7 @@ var UnityAssetTrim = (function () {
     function showMainDialog() {
         var files = [], root = null, output = null;
         var reopenForLanguage = false;
-        var win = new Window('dialog', (UnityAssetTrimLanguage === 'zh' ? 'Unity 资源批量裁剪 v1.0.1' : 'Unity Asset Trim v1.0.1'));
+        var win = new Window('dialog', (UnityAssetTrimLanguage === 'zh' ? 'Unity 资源批量裁剪 v1.1.0' : 'Unity Asset Trim v1.1.0'));
         win.orientation = 'column'; win.alignChildren = 'fill'; win.spacing = 12; win.margins = 20;
         var languageRow = win.add('group');
         languageRow.add('statictext', undefined, 'Language / 语言:');

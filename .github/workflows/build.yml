@@ -20,7 +20,11 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - name: Test script logic
-        run: node tests/unit-tests.cjs
+        run: |
+          node tests/unit-tests.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'Script lifecycle tests failed.' }
+          node tests/uxp-geometry.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'UXP geometry tests failed.' }
       - name: Build installer and portable package
         shell: powershell
         run: ./scripts/build.ps1

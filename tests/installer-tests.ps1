@@ -26,10 +26,17 @@ $source = [IO.File]::ReadAllBytes((Join-Path $root 'src\UnityAssetTrim.jsx'))
 Assert ([Convert]::ToBase64String($payload) -eq [Convert]::ToBase64String($source)) 'Embedded JSX matches source bytes'
 $target = Invoke-Core 'Install' @($photoshop)
 Assert (Test-Path -LiteralPath $target) 'Fresh installation creates the menu script'
+$panel = Join-Path $photoshop 'Plug-ins\UnityAssetTrim'
+Assert (Test-Path -LiteralPath (Join-Path $panel 'manifest.json')) 'Fresh installation creates the dockable UXP panel'
+Assert ((Get-FileHash -LiteralPath (Join-Path $panel 'operations.js')).Hash -eq (Get-FileHash -LiteralPath (Join-Path $root 'uxp\operations.js')).Hash) 'Installed panel engine matches source'
 Assert (Invoke-Core 'IsOurScript' @($target)) 'Installer recognizes its own script'
 Assert ((Get-FileHash -LiteralPath $target).Hash -eq (Get-FileHash -LiteralPath (Join-Path $root 'src\UnityAssetTrim.jsx')).Hash) 'Installed script hash matches payload'
 $null = Invoke-Core 'Install' @($photoshop)
 Assert (@(Get-ChildItem -LiteralPath (Split-Path -Parent $target) -Filter '*.backup-*').Count -eq 0) 'Identical reinstall does not create a backup'
+Assert (-not (Test-Path -LiteralPath (Join-Path $photoshop 'UnityAssetTrim-backups'))) 'Identical panel reinstall does not create a backup'
+[IO.File]::AppendAllText((Join-Path $panel 'panel.css'), "`n/* local customization */")
+$null = Invoke-Core 'Install' @($photoshop)
+Assert (@(Get-ChildItem -LiteralPath (Join-Path $photoshop 'UnityAssetTrim-backups') -Directory).Count -eq 1) 'Changed panel is backed up outside the plugin scan directory'
 [IO.File]::WriteAllText($target, '// existing user file', [Text.Encoding]::UTF8)
 $null = Invoke-Core 'Install' @($photoshop)
 $backups = @(Get-ChildItem -LiteralPath (Split-Path -Parent $target) -Filter '*.backup-*')
@@ -37,12 +44,20 @@ Assert ($backups.Count -eq 1) 'Update backs up an existing file'
 Assert ([IO.File]::ReadAllText($backups[0].FullName) -eq '// existing user file') 'Backup preserves original content'
 Assert (Invoke-Core 'Uninstall' @($photoshop)) 'Uninstall removes the installed script'
 Assert (-not (Test-Path -LiteralPath $target)) 'Menu script is absent after uninstall'
+Assert (-not (Test-Path -LiteralPath $panel)) 'Panel is absent after uninstall'
 Assert (Test-Path -LiteralPath (Join-Path $photoshop 'Photoshop.exe')) 'Photoshop executable is untouched'
 Assert (-not (Invoke-Core 'Uninstall' @($photoshop))) 'Repeated uninstall is safe'
 [IO.File]::WriteAllText($target, '// unrelated file')
 $refused = $false
 try { $null = Invoke-Core 'Uninstall' @($photoshop) } catch { $refused = $true }
 Assert ($refused -and [IO.File]::ReadAllText($target) -eq '// unrelated file') 'Uninstall refuses to remove unrelated content'
+New-Item -ItemType Directory -Path $panel -Force | Out-Null
+[IO.File]::WriteAllText((Join-Path $panel 'manifest.json'), '{"id":"another.plugin"}')
+$refused = $false
+try { $null = Invoke-Core 'Install' @($photoshop) } catch { $refused = $true }
+Assert ($refused -and [IO.File]::ReadAllText($target) -eq '// unrelated file') 'Installer refuses unrelated panel folders before changing scripts'
+Remove-Item -LiteralPath (Join-Path $panel 'manifest.json')
+Remove-Item -LiteralPath $panel
 $refused = $false
 try { $null = Invoke-Core 'Install' @($work) } catch { $refused = $true }
 Assert $refused 'Rejects a folder without Photoshop.exe'

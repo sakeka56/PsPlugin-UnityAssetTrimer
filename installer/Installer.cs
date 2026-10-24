@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Principal;
@@ -17,14 +18,15 @@ using Microsoft.Win32;
 [assembly: AssemblyCompany("sakeka56")]
 [assembly: AssemblyProduct("Unity Asset Trim")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 sakeka56")]
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 namespace UnityAssetTrimSetup
 {
     public static class InstallerCore
     {
         public const string ScriptName = "Unity Asset Trim.jsx";
+        public const string PanelID = "com.sakeka56.unityassettrim";
 
         public static byte[] ReadPayload()
         {
@@ -62,6 +64,78 @@ namespace UnityAssetTrimSetup
 
         public static string Install(string root)
         {
+            string target = ScriptPath(root), panel = PanelPath(root);
+            if (Directory.Exists(panel) && !IsOurPanel(panel)) throw new InvalidOperationException("The panel folder contains unrelated files. Nothing was replaced.");
+            byte[] oldScript = File.Exists(target) ? File.ReadAllBytes(target) : null;
+            try { InstallScript(root); InstallPanel(root); return target; }
+            catch
+            {
+                if (oldScript != null) File.WriteAllBytes(target, oldScript);
+                else if (IsOurScript(target)) File.Delete(target);
+                throw;
+            }
+        }
+
+        public static string PanelPath(string root) { return Path.Combine(ValidateRoot(root), "Plug-ins", "UnityAssetTrim"); }
+        public static bool IsOurPanel(string path)
+        {
+            string manifest = Path.Combine(path, "manifest.json");
+            return File.Exists(manifest) && File.ReadAllText(manifest, Encoding.UTF8).Contains("\"" + PanelID + "\"");
+        }
+        public static byte[] ReadPanelPayload()
+        {
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("UnityAssetTrim.Panel.zip"))
+            using (MemoryStream memory = new MemoryStream()) { stream.CopyTo(memory); return memory.ToArray(); }
+        }
+        private static void InstallPanel(string root)
+        {
+            string panel = PanelPath(root);
+            string stage = Path.Combine(ValidateRoot(root), ".UnityAssetTrim-stage-" + Guid.NewGuid().ToString("N"));
+            string backup = null;
+            Directory.CreateDirectory(stage);
+            try
+            {
+                using (MemoryStream memory = new MemoryStream(ReadPanelPayload()))
+                using (ZipArchive archive = new ZipArchive(memory, ZipArchiveMode.Read))
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        string relative = entry.FullName.Replace('\\', '/');
+                        string output = Path.GetFullPath(Path.Combine(stage, relative));
+                        if (!output.StartsWith(stage + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) throw new IOException("Invalid panel archive path.");
+                        if (relative.EndsWith("/")) { Directory.CreateDirectory(output); continue; }
+                        Directory.CreateDirectory(Path.GetDirectoryName(output));
+                        using (Stream source = entry.Open()) using (FileStream destination = new FileStream(output, FileMode.CreateNew)) source.CopyTo(destination);
+                    }
+                if (!IsOurPanel(stage)) throw new IOException("Invalid panel manifest.");
+                // Identical payloads do not generate another update backup.
+                bool identical = Directory.Exists(panel);
+                if (identical)
+                {
+                    string[] files = Directory.GetFiles(stage, "*", SearchOption.AllDirectories);
+                    identical = files.Length == Directory.GetFiles(panel, "*", SearchOption.AllDirectories).Length;
+                    foreach (string file in files)
+                    {
+                        string installed = Path.Combine(panel, file.Substring(stage.Length + 1));
+                        if (!File.Exists(installed) || !SameBytes(File.ReadAllBytes(file), File.ReadAllBytes(installed))) { identical = false; break; }
+                    }
+                }
+                if (identical) return;
+                Directory.CreateDirectory(Path.GetDirectoryName(panel));
+                if (Directory.Exists(panel))
+                {
+                    string backups = Path.Combine(ValidateRoot(root), "UnityAssetTrim-backups");
+                    Directory.CreateDirectory(backups);
+                    backup = Path.Combine(backups, "panel-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + "-" + Guid.NewGuid().ToString("N").Substring(0, 6));
+                    Directory.Move(panel, backup);
+                }
+                try { Directory.Move(stage, panel); }
+                catch { if (backup != null && !Directory.Exists(panel)) Directory.Move(backup, panel); throw; }
+            }
+            finally { if (Directory.Exists(stage)) Directory.Delete(stage, true); }
+        }
+
+        private static string InstallScript(string root)
+        {
             string target = ScriptPath(root);
             string directory = Path.GetDirectoryName(target);
             Directory.CreateDirectory(directory);
@@ -86,11 +160,13 @@ namespace UnityAssetTrimSetup
 
         public static bool Uninstall(string root)
         {
-            string target = ScriptPath(root);
-            if (!File.Exists(target)) return false;
-            if (!IsOurScript(target)) throw new InvalidOperationException("This file does not belong to Unity Asset Trim. Nothing was removed.");
-            File.Delete(target);
-            return true;
+            string target = ScriptPath(root), panel = PanelPath(root);
+            if (File.Exists(target) && !IsOurScript(target)) throw new InvalidOperationException("This file does not belong to Unity Asset Trim. Nothing was removed.");
+            if (Directory.Exists(panel) && !IsOurPanel(panel)) throw new InvalidOperationException("This panel folder does not belong to Unity Asset Trim. Nothing was removed.");
+            bool removed = File.Exists(target) || Directory.Exists(panel);
+            if (Directory.Exists(panel)) Directory.Delete(panel, true);
+            if (File.Exists(target)) File.Delete(target);
+            return removed;
         }
 
         private static bool SameBytes(byte[] a, byte[] b)
@@ -194,7 +270,7 @@ namespace UnityAssetTrimSetup
         public SetupForm(bool useChinese)
         {
             chinese = useChinese;
-            Text = "Unity Asset Trim Setup v1.0.1";
+            Text = "Unity Asset Trim Setup v1.1.0";
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             Font = new Font("Segoe UI", 10F);
@@ -299,12 +375,12 @@ namespace UnityAssetTrimSetup
 
         private void Localize()
         {
-            subtitle.Text = chinese ? "Photoshop 批量裁剪透明边缘工具\n安装后从「文件 → 脚本」启动。" : "Batch-trim transparent image borders in Photoshop.\nLaunch from File > Scripts after installation.";
+            subtitle.Text = chinese ? "Photoshop 当前文档与批量裁剪工具\n安装后从「插件 → Unity Asset Trim」打开面板。" : "Trim the active PSD or batch-process images in Photoshop.\nOpen Plugins > Unity Asset Trim after installation.";
             folderLabel.Text = chinese ? "Photoshop 安装位置（自动检测，也可手动选择）" : "Photoshop installation (detected automatically, or browse)";
             browse.Text = chinese ? "浏览…" : "Browse...";
-            details.Text = chinese ? "将脚本安装到 Presets\\Scripts。原有同名脚本会备份。\nMIT 许可证 · 无需下载组件 · 不修改 Photoshop 程序文件" : "Installs to Presets\\Scripts. Existing scripts with the same name are backed up.\nMIT License · Offline installation · Photoshop program files stay intact";
+            details.Text = chinese ? "安装 UXP 面板（需要 PS 24.4 或更高版本）与批量脚本。\n原有版本会备份；无需联网，不修改 PS 程序文件。" : "Installs a UXP panel (Photoshop 24.4+) and the batch script.\nExisting versions are backed up. Offline installation.";
             install.Text = chinese ? "一键安装 / 更新" : "Install / Update";
-            uninstall.Text = chinese ? "卸载脚本" : "Uninstall script";
+            uninstall.Text = chinese ? "卸载工具" : "Uninstall";
             status.Text = folder.Items.Count == 0 ? (chinese ? "未检测到 Photoshop，请手动选择安装位置。" : "Photoshop was not detected. Select its installation folder.") : "";
             WrapTextRows();
         }
@@ -320,7 +396,7 @@ namespace UnityAssetTrimSetup
             try
             {
                 string root = InstallerCore.ValidateRoot(folder.Text);
-                if (remove && MessageBox.Show(this, chinese ? "卸载此 Photoshop 中的 Unity Asset Trim 脚本？" : "Remove Unity Asset Trim from this Photoshop installation?", "Unity Asset Trim", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+                if (remove && MessageBox.Show(this, chinese ? "卸载此 Photoshop 中的 Unity Asset Trim 面板与批量脚本？" : "Remove the Unity Asset Trim panel and batch script from this Photoshop installation?", "Unity Asset Trim", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
                 install.Enabled = uninstall.Enabled = false;
                 try
                 {

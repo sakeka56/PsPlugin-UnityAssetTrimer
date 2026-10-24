@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 — 2026-10-24
+
+- Add a dockable UXP panel for Photoshop 24.4+ with English and Simplified Chinese interfaces.
+- Trim the focused document by changing canvas bounds only. Preserve layers and pixel scale, avoid saving, and group changes into one undo step.
+- Export a cropped PNG duplicate without modifying the source PSD.
+- Open the existing batch dialog directly from the panel.
+- Install, update, back up and uninstall both the panel and the batch script using the offline EXE.
+- Add an Adobe-packaged CCX distribution and verify it against source during builds.
+
 ## 1.0.1 — 2026-10-24
 
 - Fix the batch dialog reopening after Cancel, Escape or window close. Language switching now uses an explicit state and an iterative dialog loop.

@@ -1,0 +1,19 @@
+{
+  "manifestVersion": 5,
+  "id": "com.sakeka56.unityassettrim",
+  "name": "Unity Asset Trim",
+  "version": "1.1.0",
+  "main": "index.html",
+  "icons": [{ "width": 48, "height": 48, "path": "icons/plugin.png", "scale": [1, 2] }],
+  "host": { "app": "PS", "minVersion": "24.4.0", "data": { "apiVersion": 2 } },
+  "entrypoints": [{
+    "type": "panel", "id": "trimPanel",
+    "icons": [{ "width": 23, "height": 23, "path": "icons/panel.png", "scale": [1, 2], "theme": ["darkest", "dark", "light", "lightest"] }],
+    "label": { "default": "Unity Asset Trim", "zh-CN": "Unity 资源裁剪" },
+    "minimumSize": { "width": 260, "height": 400 },
+    "maximumSize": { "width": 1600, "height": 1600 },
+    "preferredDockedSize": { "width": 300, "height": 520 },
+    "preferredFloatingSize": { "width": 340, "height": 560 }
+  }],
+  "requiredPermissions": { "localFileSystem": "request" }
+}
