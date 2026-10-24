@@ -10,7 +10,7 @@ Choose images or a folder, set an output directory, and export. Keep original pi
 
 ## Download and install
 
-Download **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Setup-1.0.0.exe)** from [Releases](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/latest).
+Download **[UnityAssetTrim-Setup-1.0.1.exe](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.1/UnityAssetTrim-Setup-1.0.1.exe)** from [Releases](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/latest).
 
 1. Run the installer. It detects Photoshop installations automatically.
 2. Choose your Photoshop installation if more than one is listed, then click **Install / Update**. Accept a Windows administrator prompt if the installation folder requires it.
@@ -18,11 +18,13 @@ Download **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/PsPlugin
 
 The installer is a single offline executable. It installs only `Presets/Scripts/Unity Asset Trim.jsx` and backs up an existing file with the same name. No Unity package or extra runtime download is needed on a standard Windows 10/11 installation with .NET Framework 4.8.
 
+The installer window can be resized or maximized. Text wraps automatically, and content can scroll when space is limited.
+
 The executable is not code-signed. Windows may show an unknown-publisher or SmartScreen prompt. Download from this repository's Releases page; `SHA256SUMS.txt` is included for checksum verification.
 
 ### Portable / manual installation
 
-Download **[UnityAssetTrim-Portable-1.0.0.zip](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Portable-1.0.0.zip)** and extract it. In Photoshop, use **File → Scripts → Browse** to run `Unity Asset Trim.jsx`, or copy that file into Photoshop's `Presets/Scripts` folder and restart Photoshop.
+Download **[UnityAssetTrim-Portable-1.0.1.zip](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.1/UnityAssetTrim-Portable-1.0.1.zip)** and extract it. In Photoshop, use **File → Scripts → Browse** to run `Unity Asset Trim.jsx`, or copy that file into Photoshop's `Presets/Scripts` folder and restart Photoshop.
 
 ## Use
 
@@ -64,6 +66,8 @@ The alpha threshold changes only the crop rectangle. Semitransparent pixels insi
 ## Update and uninstall
 
 Run the newer installer and choose **Install / Update**. Reinstalling the same payload does not create redundant backups.
+
+Updating from 1.0.0 fixes the script dialog reopening after cancellation. Save your work and exit Photoshop before updating, then reopen it so any script already running in memory is cleared.
 
 To uninstall, run the installer, select Photoshop and click **Uninstall script**. You can also delete `Presets/Scripts/Unity Asset Trim.jsx` manually. Backups named `Unity Asset Trim.jsx.backup-*` remain available; remove or restore them manually if needed. Restart Photoshop to refresh its script menu.
 

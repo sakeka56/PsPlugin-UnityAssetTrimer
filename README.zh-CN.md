@@ -10,7 +10,7 @@
 
 ## 下载与安装
 
-前往 [Releases](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/latest)，下载 **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Setup-1.0.0.exe)**。
+前往 [Releases](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/latest)，下载 **[UnityAssetTrim-Setup-1.0.1.exe](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.1/UnityAssetTrim-Setup-1.0.1.exe)**。
 
 1. 打开安装程序，程序会自动检测 Photoshop 安装位置。
 2. 如有多个版本，选择目标 Photoshop，然后点击 **一键安装 / 更新**。目录需要管理员权限时，允许 Windows 的权限提示。
@@ -18,11 +18,13 @@
 
 安装器是一个离线 EXE，只安装 `Presets/Scripts/Unity Asset Trim.jsx`，遇到已有同名文件会先备份。无需安装 Unity 包；标准 Windows 10/11 环境自带的 .NET Framework 4.8 即可运行，无需额外下载运行时。
 
+安装窗口支持拖动调整大小和最大化，文字自动换行；空间不足时可滚动查看内容。
+
 当前 EXE 未做代码签名，Windows 可能提示未知发布者或 SmartScreen。请从本仓库的 Releases 下载；发布包同时提供 `SHA256SUMS.txt` 以便校验文件。
 
 ### 便携使用 / 手动安装
 
-下载并解压 **[UnityAssetTrim-Portable-1.0.0.zip](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Portable-1.0.0.zip)**。在 PS 中通过 **文件 → 脚本 → 浏览** 运行其中的 `Unity Asset Trim.jsx`；也可以把它复制到 PS 的 `Presets/Scripts` 文件夹，重启后从脚本菜单启动。
+下载并解压 **[UnityAssetTrim-Portable-1.0.1.zip](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.1/UnityAssetTrim-Portable-1.0.1.zip)**。在 PS 中通过 **文件 → 脚本 → 浏览** 运行其中的 `Unity Asset Trim.jsx`；也可以把它复制到 PS 的 `Presets/Scripts` 文件夹，重启后从脚本菜单启动。
 
 ## 使用方法
 
@@ -64,6 +66,8 @@ Alpha 阈值仅决定裁剪范围。范围内原有半透明像素的 Alpha 不�
 ## 更新与卸载
 
 运行新版安装器，点击 **一键安装 / 更新**。相同版本重复安装不会产生冗余备份。
+
+从 1.0.0 升级可修复脚本取消后重复弹窗的问题。请先保存工作并退出 Photoshop，再安装新版，之后重新打开 PS，清除仍在内存中执行的旧脚本。
 
 卸载时，打开安装器，选择 Photoshop，点击 **卸载脚本**；也可以手动删除 `Presets/Scripts/Unity Asset Trim.jsx`。形如 `Unity Asset Trim.jsx.backup-*` 的备份会保留，可按需手动还原或删除。重启 PS 后刷新脚本菜单。
 

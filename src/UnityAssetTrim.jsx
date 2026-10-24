@@ -1,5 +1,5 @@
 #target photoshop
-/* Unity Asset Trim v1.0.0 | MIT License | Copyright (c) 2026 sakeka56 */
+/* Unity Asset Trim v1.0.1 | MIT License | Copyright (c) 2026 sakeka56 */
 var UnityAssetTrimLanguage = typeof UnityAssetTrimLanguage === "undefined" ?
     (typeof app !== "undefined" && /^zh/i.test(app.locale) ? "zh" : "en") : UnityAssetTrimLanguage;
 function uatText(text) {
@@ -24,7 +24,7 @@ function uatText(text) {
     " 张，跳过 ": "; skipped: ",
     " 张，失败 ": "; failed: ",
     " 张。\n": ".\n",
-    "Unity 资源批量裁剪 v1.0": "Unity Asset Trim v1.0.0",
+    "Unity 资源批量裁剪 v1.0": "Unity Asset Trim v1.0.1",
     "裁掉透明边缘 · 原尺寸像素导出 · 源文件保留": "Trim transparent edges · Keep pixel scale · Preserve source files",
     "1. 输入图片": "1. Input images",
     "选择多张图片…": "Choose images...",
@@ -238,8 +238,14 @@ var UnityAssetTrim = (function () {
         return items.join('\t');
     }
     function main() {
+        // ScriptUI reserves dialog result 2 for Cancel/Escape. Only an explicit
+        // language change may rebuild the dialog; do not interpret result 2.
+        while (showMainDialog()) {}
+    }
+    function showMainDialog() {
         var files = [], root = null, output = null;
-        var win = new Window('dialog', (UnityAssetTrimLanguage === 'zh' ? 'Unity 资源批量裁剪 v1.0.0' : 'Unity Asset Trim v1.0.0'));
+        var reopenForLanguage = false;
+        var win = new Window('dialog', (UnityAssetTrimLanguage === 'zh' ? 'Unity 资源批量裁剪 v1.0.1' : 'Unity Asset Trim v1.0.1'));
         win.orientation = 'column'; win.alignChildren = 'fill'; win.spacing = 12; win.margins = 20;
         var languageRow = win.add('group');
         languageRow.add('statictext', undefined, 'Language / 语言:');
@@ -247,7 +253,11 @@ var UnityAssetTrim = (function () {
         language.selection = UnityAssetTrimLanguage === 'zh' ? 0 : 1;
         language.onChange = function () {
             var next = language.selection.index === 0 ? 'zh' : 'en';
-            if (next !== UnityAssetTrimLanguage) { UnityAssetTrimLanguage = next; win.close(2); }
+            if (next !== UnityAssetTrimLanguage) {
+                UnityAssetTrimLanguage = next;
+                reopenForLanguage = true;
+                win.close(0);
+            }
         };
         win.add('statictext', undefined, uatText('裁掉透明边缘 · 原尺寸像素导出 · 源文件保留'));
         var input = win.add('panel', undefined, uatText('1. 输入图片')); input.alignChildren = 'fill';
@@ -283,7 +293,8 @@ var UnityAssetTrim = (function () {
         var padding = pad.add('edittext', undefined, '0'); padding.characters = 6;
         win.add('statictext', undefined, uatText('输出为 8 位 RGB PNG；同名自动编号。纯色背景不会被当成透明边缘。'));
         var actions = win.add('group'); actions.alignment = 'right';
-        actions.add('button', undefined, uatText('取消'), { name: 'cancel' });
+        var dismiss = actions.add('button', undefined, uatText('取消'), { name: 'cancel' });
+        dismiss.onClick = function () { win.close(0); };
         var start = actions.add('button', undefined, uatText('开始批量裁剪'), { name: 'ok' });
         var config = null;
         start.onClick = function () {
@@ -303,8 +314,9 @@ var UnityAssetTrim = (function () {
             win.close(1);
         };
         var result = win.show();
-        if (result === 2) { main(); }
-        else if (result === 1 && config) { runBatch(files, config); }
+        if (reopenForLanguage) { return true; }
+        if (result === 1 && config) { runBatch(files, config); }
+        return false;
     }
     return { main: main, processFile: processFile, evenSize: evenSize, collect: collect, uniqueFile: uniqueFile, outputFolder: outputFolder, runBatch: runBatch };
 }());

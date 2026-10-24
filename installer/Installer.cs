@@ -17,8 +17,8 @@ using Microsoft.Win32;
 [assembly: AssemblyCompany("sakeka56")]
 [assembly: AssemblyProduct("Unity Asset Trim")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 sakeka56")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
 
 namespace UnityAssetTrimSetup
 {
@@ -189,30 +189,55 @@ namespace UnityAssetTrimSetup
         private readonly ComboBox folder = new ComboBox();
         private readonly Label subtitle = new Label(), folderLabel = new Label(), details = new Label(), status = new Label();
         private readonly Button browse = new Button(), install = new Button(), uninstall = new Button();
+        private readonly TableLayoutPanel content = new TableLayoutPanel();
 
         public SetupForm(bool useChinese)
         {
             chinese = useChinese;
-            Text = "Unity Asset Trim Setup v1.0.0";
-            Font = new Font("Segoe UI", 10F);
+            Text = "Unity Asset Trim Setup v1.0.1";
+            AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(660, 415);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
+            Font = new Font("Segoe UI", 10F);
+            ClientSize = new Size(740, 480);
+            MinimumSize = new Size(640, 460);
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MaximizeBox = true;
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.FromArgb(248, 250, 252);
-            Label title = new Label { Text = "Unity Asset Trim", Font = new Font("Segoe UI", 24F, FontStyle.Bold), AutoSize = true, Location = new Point(28, 24) };
-            Controls.Add(title);
+            content.Dock = DockStyle.Fill;
+            content.AutoScroll = true;
+            content.Padding = new Padding(24);
+            content.ColumnCount = 1;
+            content.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            content.RowCount = 8;
+            for (int row = 0; row < 8; row++)
+                content.RowStyles.Add(new RowStyle(row == 6 ? SizeType.Percent : SizeType.AutoSize, row == 6 ? 100F : 0F));
+            Controls.Add(content);
+            TableLayoutPanel header = MakeRow();
+            header.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            header.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            Label title = new Label { Text = "Unity Asset Trim", Font = new Font("Segoe UI", 24F, FontStyle.Bold), AutoSize = true, Anchor = AnchorStyles.Left };
+            header.Controls.Add(title, 0, 0);
             language.DropDownStyle = ComboBoxStyle.DropDownList;
             language.Items.AddRange(new object[] { "简体中文", "English" });
-            language.SetBounds(496, 35, 135, 30); language.SelectedIndex = chinese ? 0 : 1;
+            language.Width = 150; language.Anchor = AnchorStyles.Right;
+            language.Margin = new Padding(12, 8, 0, 8);
+            language.SelectedIndex = chinese ? 0 : 1;
             language.SelectedIndexChanged += delegate { chinese = language.SelectedIndex == 0; Localize(); };
-            subtitle.SetBounds(30, 82, 600, 42);
-            folderLabel.SetBounds(30, 137, 595, 26);
-            folder.SetBounds(30, 166, 493, 32); folder.DropDownStyle = ComboBoxStyle.DropDown;
+            header.Controls.Add(language, 1, 0);
+            content.Controls.Add(header, 0, 0);
+            AddTextRow(subtitle, 1, 8);
+            AddTextRow(folderLabel, 2, 14);
+            TableLayoutPanel pathRow = MakeRow();
+            pathRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            pathRow.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            folder.Dock = DockStyle.Fill; folder.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            folder.Margin = new Padding(0, 6, 12, 6); folder.DropDownStyle = ComboBoxStyle.DropDown;
             folder.Items.AddRange(InstallerCore.DetectInstallations().ToArray());
             if (folder.Items.Count > 0) folder.SelectedIndex = folder.Items.Count - 1;
-            browse.SetBounds(535, 165, 96, 32);
+            PrepareButton(browse); browse.MinimumSize = new Size(100, 0);
+            pathRow.Controls.Add(folder, 0, 0); pathRow.Controls.Add(browse, 1, 0);
+            content.Controls.Add(pathRow, 0, 3);
             browse.Click += delegate {
                 using (FolderBrowserDialog picker = new FolderBrowserDialog())
                 {
@@ -222,14 +247,54 @@ namespace UnityAssetTrimSetup
                     if (picker.ShowDialog(this) == DialogResult.OK) folder.Text = picker.SelectedPath;
                 }
             };
-            details.SetBounds(30, 217, 600, 58);
-            status.SetBounds(30, 284, 600, 48); status.ForeColor = Color.FromArgb(30, 64, 175);
-            uninstall.SetBounds(30, 348, 142, 38); uninstall.Click += delegate { RunOperation(true); };
-            install.SetBounds(443, 344, 188, 44); install.BackColor = Color.FromArgb(37, 99, 235); install.ForeColor = Color.White;
+            AddTextRow(details, 4, 16);
+            AddTextRow(status, 5, 12); status.ForeColor = Color.FromArgb(30, 64, 175);
+            TableLayoutPanel footer = MakeRow(); footer.ColumnCount = 3;
+            footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            PrepareButton(uninstall); uninstall.Click += delegate { RunOperation(true); };
+            PrepareButton(install); install.MinimumSize = new Size(180, 0);
+            install.BackColor = Color.FromArgb(37, 99, 235); install.ForeColor = Color.White;
             install.FlatStyle = FlatStyle.Flat; install.Click += delegate { RunOperation(false); };
-            Controls.AddRange(new Control[] { language, subtitle, folderLabel, folder, browse, details, status, uninstall, install });
+            footer.Controls.Add(uninstall, 0, 0); footer.Controls.Add(install, 2, 0);
+            content.Controls.Add(footer, 0, 7);
+            content.SizeChanged += delegate { WrapTextRows(); };
+            FontChanged += delegate { WrapTextRows(); };
             AcceptButton = install;
             Localize();
+        }
+
+        private static TableLayoutPanel MakeRow()
+        {
+            TableLayoutPanel row = new TableLayoutPanel();
+            row.AutoSize = true; row.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            row.Dock = DockStyle.Top; row.Margin = new Padding(0);
+            row.ColumnCount = 2; row.RowCount = 1;
+            row.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            return row;
+        }
+
+        private static void PrepareButton(Button button)
+        {
+            button.AutoSize = true; button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button.Padding = new Padding(12, 8, 12, 8);
+            button.Margin = new Padding(0, 4, 0, 4);
+            button.Anchor = AnchorStyles.Left;
+        }
+
+        private void AddTextRow(Label label, int row, int topMargin)
+        {
+            label.AutoSize = true; label.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            label.Margin = new Padding(0, topMargin, 0, 4);
+            content.Controls.Add(label, 0, row);
+        }
+
+        private void WrapTextRows()
+        {
+            int width = Math.Max(100, content.ClientSize.Width - content.Padding.Horizontal - SystemInformation.VerticalScrollBarWidth - 2);
+            foreach (Label label in new[] { subtitle, folderLabel, details, status })
+                if (label.MaximumSize.Width != width) label.MaximumSize = new Size(width, 0);
         }
 
         private void Localize()
@@ -241,6 +306,7 @@ namespace UnityAssetTrimSetup
             install.Text = chinese ? "一键安装 / 更新" : "Install / Update";
             uninstall.Text = chinese ? "卸载脚本" : "Uninstall script";
             status.Text = folder.Items.Count == 0 ? (chinese ? "未检测到 Photoshop，请手动选择安装位置。" : "Photoshop was not detected. Select its installation folder.") : "";
+            WrapTextRows();
         }
 
         private static bool IsAdministrator()

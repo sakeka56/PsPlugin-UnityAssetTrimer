@@ -2,7 +2,10 @@
 param([string]$Installer)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-if (-not $Installer) { $Installer = Join-Path $root 'dist\UnityAssetTrim-Setup-1.0.0.exe' }
+if (-not $Installer) {
+    $version = (Get-Content -LiteralPath (Join-Path $root 'VERSION') -Raw).Trim()
+    $Installer = Join-Path $root "dist\UnityAssetTrim-Setup-$version.exe"
+}
 $assembly = [Reflection.Assembly]::LoadFile((Resolve-Path -LiteralPath $Installer).Path)
 $core = $assembly.GetType('UnityAssetTrimSetup.InstallerCore', $true)
 function Invoke-Core([string]$Method, [object[]]$Arguments) {
@@ -50,4 +53,12 @@ $process = Start-Process -FilePath $Installer -ArgumentList @('/uninstall', ('"'
 Assert ($process.ExitCode -eq 0 -and -not (Test-Path -LiteralPath $target)) 'Compiled EXE supports silent uninstall'
 $process = Start-Process -FilePath $Installer -ArgumentList @('/install', ('"' + $work + '"'), '/quiet') -WindowStyle Hidden -Wait -PassThru
 Assert ($process.ExitCode -ne 0) 'Compiled EXE reports invalid path through exit code'
+$compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+if (-not (Test-Path -LiteralPath $compiler)) { $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
+$layoutExe = Join-Path $work 'LayoutTests.exe'
+& $compiler /nologo /target:winexe /reference:System.Windows.Forms.dll /reference:System.Drawing.dll "/out:$layoutExe" (Join-Path $PSScriptRoot 'layout-tests.cs')
+if ($LASTEXITCODE -ne 0) { throw 'Layout test compilation failed.' }
+$process = Start-Process -FilePath $layoutExe -ArgumentList @(('"' + (Resolve-Path -LiteralPath $Installer).Path + '"'), ('"' + $work + '"')) -WindowStyle Hidden -Wait -PassThru
+Get-Content -LiteralPath (Join-Path $work 'layout-results.txt')
+Assert ($process.ExitCode -eq 0) 'Installer bilingual layout and resizing at simulated 100%, 150%, 200% scaling'
 Write-Output 'Installer tests complete.'
