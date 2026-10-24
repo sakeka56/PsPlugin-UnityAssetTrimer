@@ -6,11 +6,11 @@
 
 选择多张图片或整个文件夹，指定导出位置，即可批量处理。保留原有像素比例，可让宽高保持偶数，也能忽略导致留白过大的微弱透明杂点。
 
-![裁剪前后示意](docs/assets/trim-example.svg)
+![裁剪前后示意](docs/assets/trim-example.zh-CN.svg)
 
 ## 下载与安装
 
-前往 [Releases](https://github.com/sakeka56/unity-asset-trim/releases/latest)，下载 **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/unity-asset-trim/releases/download/v1.0.0/UnityAssetTrim-Setup-1.0.0.exe)**。
+前往 [Releases](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/latest)，下载 **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Setup-1.0.0.exe)**。
 
 1. 打开安装程序，程序会自动检测 Photoshop 安装位置。
 2. 如有多个版本，选择目标 Photoshop，然后点击 **一键安装 / 更新**。目录需要管理员权限时，允许 Windows 的权限提示。
@@ -22,7 +22,7 @@
 
 ### 便携使用 / 手动安装
 
-下载并解压 **[UnityAssetTrim-Portable-1.0.0.zip](https://github.com/sakeka56/unity-asset-trim/releases/download/v1.0.0/UnityAssetTrim-Portable-1.0.0.zip)**。在 PS 中通过 **文件 → 脚本 → 浏览** 运行其中的 `Unity Asset Trim.jsx`；也可以把它复制到 PS 的 `Presets/Scripts` 文件夹，重启后从脚本菜单启动。
+下载并解压 **[UnityAssetTrim-Portable-1.0.0.zip](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Portable-1.0.0.zip)**。在 PS 中通过 **文件 → 脚本 → 浏览** 运行其中的 `Unity Asset Trim.jsx`；也可以把它复制到 PS 的 `Presets/Scripts` 文件夹，重启后从脚本菜单启动。
 
 ## 使用方法
 

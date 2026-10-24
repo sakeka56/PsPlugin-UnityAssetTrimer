@@ -10,7 +10,7 @@ Choose images or a folder, set an output directory, and export. Keep original pi
 
 ## Download and install
 
-Download **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/unity-asset-trim/releases/download/v1.0.0/UnityAssetTrim-Setup-1.0.0.exe)** from [Releases](https://github.com/sakeka56/unity-asset-trim/releases/latest).
+Download **[UnityAssetTrim-Setup-1.0.0.exe](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Setup-1.0.0.exe)** from [Releases](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/latest).
 
 1. Run the installer. It detects Photoshop installations automatically.
 2. Choose your Photoshop installation if more than one is listed, then click **Install / Update**. Accept a Windows administrator prompt if the installation folder requires it.
@@ -22,7 +22,7 @@ The executable is not code-signed. Windows may show an unknown-publisher or Smar
 
 ### Portable / manual installation
 
-Download **[UnityAssetTrim-Portable-1.0.0.zip](https://github.com/sakeka56/unity-asset-trim/releases/download/v1.0.0/UnityAssetTrim-Portable-1.0.0.zip)** and extract it. In Photoshop, use **File → Scripts → Browse** to run `Unity Asset Trim.jsx`, or copy that file into Photoshop's `Presets/Scripts` folder and restart Photoshop.
+Download **[UnityAssetTrim-Portable-1.0.0.zip](https://github.com/sakeka56/PsPlugin-UnityAssetTrimer/releases/download/v1.0.0/UnityAssetTrim-Portable-1.0.0.zip)** and extract it. In Photoshop, use **File → Scripts → Browse** to run `Unity Asset Trim.jsx`, or copy that file into Photoshop's `Presets/Scripts` folder and restart Photoshop.
 
 ## Use
 
